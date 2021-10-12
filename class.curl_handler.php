@@ -19,7 +19,8 @@ class curl_handler
 	protected $headers;	//!< @protected array
 	protected $body;	//!< @protected array request body data.  .  Only PUT/POST. prep sets this
 	protected $data;	//!< client (write2woo_object) sets this
-	protected $curlopts;	//!< array of options to be set in CURL
+	var $curlopts;	//!< array of options to be set in CURL
+	//protected $curlopts;	//!< array of options to be set in CURL
 	protected $duration; //!< How long did the query take
 	protected $response_headers;	//!< @var string the headers returned from the curl call
 	protected $request_headers;	//!< @var string the headers to be sent on the request
@@ -207,6 +208,5 @@ class curl_handler
 	//	set Body
 	//	call do_request
 	//		call make_api_call( method, path, data (body/param) )
-}
 
 ?>

@@ -119,7 +119,8 @@ class eventloop extends kfLog implements splSubject
 		//return FALSE;
 		$this->initEventGroup( $event );
 		echo "Attaching Observer " . get_class( $observer ) . " to event " . $event . "\n\r";
-               	$this->observers[$event][] = $observer;	//Indirect modification has no effect ERROR
+		$this->observers[$event][] = $observer;	//Indirect modification has no effect ERROR
+			//->observers is a private var, initialized as an array in class definition.
 /*
 		try {
 			if( isset( $this->observers[$event] ) )
@@ -214,7 +215,14 @@ class eventloop extends kfLog implements splSubject
 			{
 				$modarray[$carray['loadpriority']][] = $carray;
 				//Add to tabs...
-                                $tabarray[$carray['taborder']][] = $carray;
+				if( isset( $carray['taborder'] ) )
+				{
+                                	$tabarray[$carray['taborder']][] = $carray;
+				}
+				else
+				{
+                                	$tabarray[99][] = $carray;
+				}
 
 			}
 		}

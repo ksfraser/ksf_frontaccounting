@@ -51,6 +51,8 @@ define( 'REFERENCE_LENGTH', 40 );
 define( 'LOC_CODE_LENGTH', 5 );
 //table stock_category
 define( 'CAT_DESCRIPTION_LENGTH', 20 );
+define( 'MAX_UPC_LEN', 14 );
+define( 'MIN_UPC_LEN', 4 );
 
 //table suppliers
 define( 'SUPP_NAME_LENGTH', 60 );
@@ -140,8 +142,9 @@ $stock_id_tables[] = array( 'table' => TB_PREF . 'woo', 'column' => 'stock_id', 
  * ****************************************************************************/
 $eventcount = 573000;
 define( 'KSF_FIELD_NOT_SET', $eventcount ); $eventcount++;	//Class Fields
-define( 'KSF_VALUE_NOT_SET', $eventcount ); $eventcount++;
+define( 'KSF_VALUE_NOT_SET', $eventcount ); $eventcount++;	//var set to NULL
 define( 'KSF_VAR_NOT_SET', $eventcount ); $eventcount++;	//Function VARs
+define( 'KSF_RESULT_NOT_SET', $eventcount ); $eventcount++;	//For when we are expecting a result from a call and it came back NULL unexpectedly
 define( 'KSF_FIELD_NOT_CLASS_VAR', $eventcount ); $eventcount++;
 define( 'KSF_PRIKEY_NOT_SET', $eventcount ); $eventcount++;
 define( 'KSF_PRIKEY_NOT_DEFINED', $eventcount ); $eventcount++;

@@ -173,7 +173,8 @@ class origin
 		$rtn = array ();
 		//private prefixed by class name, protected by *
     		$rtn['___SOURCE_KEYS_'] = $clone;
-    		while ( list ($key, $value) = each ($clone) ) {
+    		//while ( list ($key, $value) = each ($clone) ) {
+    		foreach( $clone as $key => $value ) {
         		$aux = explode ("\0", $key);
         		$newkey = $aux[count($aux)-1];
         		$rtn[$newkey] = $rtn['___SOURCE_KEYS_'][$key];
@@ -208,10 +209,12 @@ class origin
 	 * @param field string Variable to be set
 	 * @param value ... value for variable to be set
 	 * @param native... bool enforce only the variables of the class itself.  default TRUE, which will break code.
+	 * @returns bool | exception
 	 *
 	 * **********************************************/
 	function set( $field, $value = null, $enforce_only_native_vars = true )
 	{
+		//$this->tell_eventloop( $this, 'NOTIFY_LOG_DEBUG', get_class( $this ) . "::" . __FUNCTION__ . "::" . __LINE__ );
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
 
 		if( !isset( $field )  )
@@ -235,7 +238,10 @@ class origin
 
 		}
 		if( isset( $value ) )
+		{
 			$this->$field = $value;
+			return TRUE;
+		}
 		else
 			throw new Exception( "Value to be set not passed in for field " . $field, KSF_VALUE_NOT_SET );
 	}
@@ -243,6 +249,7 @@ class origin
 	 * Most of our existing code does not use TRY/CATCH so we will trap here
 	 *
 	 * Eat any exceptions thrown by ->set
+	 * @returns bool from ->set
 	 *
 	 * *****************************************************/
 	/*@NULL@*/function set_var( $var, $value )
@@ -250,7 +257,7 @@ class origin
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
 
 		try {
-			$this->set( $var, $value );
+			return $this->set( $var, $value );
 		} catch( Exception $e )
 		{
 		}
@@ -268,6 +275,15 @@ class origin
 	function get( $field )
 	{
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
+		/*
+		try{
+			$this->user_access( KSF_DATA_ACCESS_READ );
+		} 
+		catch (Exception $e )
+		{
+			throw new Exception( $e->getMessage, $e->getCode );
+		}
+		*/
 
 		if( isset( $this->$field ) )
 			return $this->$field;
@@ -339,9 +355,9 @@ class origin
 	********************/
 	function attach_eventloop( $create_if_not_exist = true )
 	{
-		global $eventloop;
 		if( ! isset( $this->eventloop ) )
 		{
+			global $eventloop;
 			if( isset( $eventloop ) )
 			{
 				if( is_object( $eventloop ) AND get_class( $eventloop ) == "eventloop" )
@@ -499,10 +515,10 @@ class origin
 
                 //This NEEDS to be overridden
                 $this->interestedin[KSF_DUMMY_EVENT]['function'] = "dummy";
-                $this->interestedin["SETTINGS_APP_LOG_LEVEL"]['function'] = "set_log_level";
+                $this->interestedin["SETTINGS_APP_LOG_LEVEL"]['function'] = "app_log_level";
 	//	throw new Exception( "You MUST override this function, even if it is empty!", KSF_FCN_NOT_OVERRIDDEN );
 	}
-	function set_log_level( $caller, $data )
+	function app_log_level( $caller, $data )
 	{
 		$this->set( 'loglevel', $data );
 	}

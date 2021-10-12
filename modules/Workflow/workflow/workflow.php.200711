@@ -1,0 +1,247 @@
+<?php
+
+//This module is to control the workflow of tasks
+//A task can trigger a workflow if it is a CRUD process on a table
+//Simply viewing a table (Select/view/list) will not trigger a work flow.
+//The purpose of human intervention in the workflow will 
+//be to select something or update a record, not just look.  If a review is
+//needed in the workflow, put an approved field in the data table 
+//so there is something to record that fact, and trigger the review
+//
+//Uses a PETRI network of places, transitions (arcs).
+//
+
+//Typical layout of a task:
+//Start -> Action 1 -> { Case -> Action }* ->  End
+//An Action can split into multiple cases
+//Multiple Cases can be a precondition before an action is active
+//Each action may be available to only certain roles
+
+class WorkflowMenu
+{
+	//Create the table of outstanding items for the user to action
+	function Display() { return;
+		return '<div class="workflow">WORKFLOW ' . $_SERVER['PHP_SELF'] . '</div><br />'; }
+}
+
+class Workflow
+{
+	var $self;
+	var $class;
+	var $context;
+	var $token;
+	var $workflow_id;
+	var $place_id;
+	function Workflow( $class = NULL )
+	{
+		return;
+		//
+		if ($class != NULL)
+		{
+			$table = $class->querytablename;
+			if ( strncasecmp( $table,  "state", 5) == 0 )
+				return;
+		}
+		//var_dump( $_SERVER );
+		$script = $_SERVER['SCRIPT_NAME'];
+		$scriptarr = explode( '/', $script );
+		$scriptcount = count( $scriptarr );
+		$this->self = $scriptarr[ $scriptcount - 1 ];
+		//-strlen($_MY_PATH_PART)
+		$this->class = $class;
+		$this->StartWorkflow();
+		$this->FireTransitions();
+		return;
+	}
+	function StartWorkflow()
+	{
+		//Check for self in list of tasks that start a workflow
+		require_once( 'classes/stateworkflow.class.php');
+		$flow = new stateworkflow;
+		$flow->where = "start_task like '%" . $this->self . "%'";
+		$flow->Select();
+		//var_dump( $flow->resultarray );
+		foreach ($flow->resultarray as $row)
+		{
+			//If we are a start task, add a token to the right place
+			$this->workflow_id = $flow->resultarray[0]['workflow_id'];
+			require_once( 'classes/stateplace.class.php');
+			$place = new stateplace;
+			$place->where = "workflow_id = '" . $this->workflow_id . "' and place_type='S'";
+			$place->Select();
+			$this->place_id = $place->resultarray[0]['place_id'];
+			$this->InsertToken();
+			return;
+		}
+		return;
+	}
+	
+	function InsertToken()
+	{
+		require_once( 'classes/statetoken.class.php');
+		$token = new statetoken;
+		$insert['workflow_id'] = $this->workflow_id;
+		$insert['place_id'] = $this->place_id;
+		$insert['context'] = $this->class->lastinsertid;
+		$this->context = $this->class->lastinsertid;
+		$token->Insert( $insert );
+		$this->token = $token->lastinsertid;
+		return;
+	}
+	function CreateCase( $workflow_id )
+	{
+		//Create a new entry in CASE
+		require_once( 'classes/statecase.class.php');
+		$case = new statecase;
+		$caseupdate['workflow_id'] = $workflow_id;
+		$caseupdate['context'] = $this->class->lastinsertid;
+		$caseupdate['case_status'] = 'O'; //Open
+		$caseupdate['created_user'] = $_SERVER['PHP_AUTH_USER'];
+		$caseupdate['start_date'] = date( "Y-m-d" );
+		$caseupdate['created_date'] = date( "Y-m-d" );
+		//$case->Update( $caseupdate );
+		$case->Insert( $caseupdate );
+		return;
+	}
+	function CreateToken( $workflow_id )
+	{
+		//Put a token in the start place
+		require_once( 'classes/stateplace.class.php');
+		$place = new stateplace;
+		$placeupdate['workflow_id'] = $workflow_id;
+		$placeupdate['place_type'] = 'S'; //Start
+		$placeupdate['created_user'] = $_SERVER['PHP_AUTH_USER'];
+		$placeupdate['start_date'] = date( "Y-m-d" );
+		$placeupdate['created_date'] = date( "Y-m-d" );
+		$place->Insert( $placeupdate );
+		return;
+
+	}
+	function FireTransitions()
+	{
+		//Are we a token in a place?
+		//Arcs connect places to transitions
+		require_once( 'classes/statearc.class.php');
+		$arc = new statearc;
+		$arc->where = "workflow_id='" . $this->workflow_id . "' and place_id ='" . $this->place_id . "' and direction='pt'";
+		$arc->Select();
+		//Determine transition - could be multiple transitions (arcs) out
+		$links = "";
+		foreach ($arc->resultarray as $key=>$value)
+		{
+			//this (arc) gives us a precondition, type, transition id
+			require_once( 'classes/statetransition.class.php');
+			$transition = new statetransition;
+			$transition->where = "transition_id = '" . $value['transition_id'] . "'";
+			$transition->Select();
+			//The transition gives us the task id
+			require_once( 'classes/tasks.class.php');
+			$task = new tasks;
+			$task->where = "idtasks = '" . $transition->resultarray[0]['task_id'] . "'";
+			$task->Select();
+			//User intermediate tasks should mostly be update tasks
+			$URL = $task->resultarray[0]['tasklink'];
+			$description = $task->resultarray[0]['taskdescription'];
+			/*
+			if ( strncmp( $value['type'], 'USER', 4 ) == 0 )
+			{
+			*/
+			$links .= "<a href='" . $URL . "'>Next step - " . $description . "</a><br />";
+			/*
+			}
+			else
+			{
+				//
+			}
+			*/
+		}
+		//Consume current token and fire transitions
+		$this->ConsumeToken();
+	        //create new token(s)
+
+		$_SESSION['workflowlinks'] = $links;
+		return;
+	}
+	function ConsumeToken()
+	{
+		$tokenupdate['statetoken_id'] = $this->token;
+		$tokenupdate['status'] = 'C';
+		require_once( 'classes/statetoken.class.php');
+		$token = new statetoken;
+		$token->Update( $tokenupdate );
+		return;
+	}
+	function Menu()
+	{
+		//include_once( $_SERVER['DOCUMENT_ROOT'] . '/pos/local.php');
+
+		//Add the Process Starts that are available to this person's role
+		$query = "select stateworkflow.*, users.roles_id, users.username, stateflowrole.workflow_id from stateworkflow  join stateflowrole  on stateflowrole.workflow_id = stateworkflow.workflow_id join users on users.roles_id = stateflowrole.roles_id where users.username = '" . $_SERVER['PHP_AUTH_USER'] . "'";
+		$db = Local_DB();
+		$db->SetQuery($query);
+		$db->Query();
+		$db->ResultToRows();
+		//var_dump($db->resultrows);
+		$menutable = new Menu( "workflow" );
+		$choices = array();
+		foreach( $db->resultrows as $index=>$row)
+		{
+			//var_dump($row);
+			//echo "<br />TASK " . $row['taskdescription'] . "::" . $row['tasklink'] . "::" . $row['taskparent'] . "<br />";
+			if (! in_array(  $row['workflow_name'], $choices  ) )
+			{
+				$mc = new MenuCell( $row['workflow_name'] );
+				$menutable->SetItem( $mc );
+				$submenu[$row['workflow_name']] = $mc;
+				$choices[] = $row['workflow_name'];
+			}
+
+			$mchoice = new MenuChoice( "workflow", APPDIR . "/" . $row['start_task'], $row['workflow_desc'] );
+			//$mc->SetOption( $mchoice );
+			$submenu[$row['workflow_name']]->SetOption( $mchoice );
+		}
+
+		//Now add the workflow processes (places) that have tokens waiting for someone of this role
+
+		/*  
+		select 	*
+		from 		statetoken,
+		stateworkflow,
+		stateflowrole,
+		users,
+		stateplace
+		where 		users.username = 'kevin'
+		and users.roles_id = stateflowrole.roles_id
+		and stateflowrole.workflow_id = stateworkflow.workflow_id
+		and stateplace.place_id = statetoken.place_id
+		and stateworkflow.workflow_id = statetoken.workflow_id
+		*/
+
+		$db->SetQuery( "select * from statetoken, stateworkflow, stateflowrole, users, stateplace where users.username = 'kevin' and users.roles_id = stateflowrole.roles_id and stateflowrole.workflow_id = stateworkflow.workflow_id and stateplace.place_id = statetoken.place_id and stateworkflow.workflow_id = statetoken.workflow_id ");	
+		$db->Query();
+		$db->ResultToRows();
+		foreach( $db->resultrows as $index=>$row)
+		{
+			if (! in_array(  $row['workflow_name'], $choices  ) )
+			{
+				$mc = new MenuCell( $row['workflow_name'] );
+				$menutable->SetItem( $mc );
+				$submenu[$row['workflow_name']] = $mc;
+				$choices[] = $row['workflow_name'];
+			}
+
+			$mchoice = new MenuChoice( "workflow", APPDIR . "/" . $row['start_task'], $row['workflow_desc'] );
+			//$mc->SetOption( $mchoice );
+			$submenu[$row['workflow_name']]->SetOption( $mchoice );
+		}
+
+
+		if (isset( $smarty ))
+		{
+			$smarty->assign('workflow', "");
+		}
+		return $menutable;
+	}
+				
+}
+?>

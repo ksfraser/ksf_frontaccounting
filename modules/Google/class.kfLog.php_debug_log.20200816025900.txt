@@ -1,0 +1,100 @@
+1//7::eventloop had event NOTIFY_LOG_INFO with message Adding Module TABS
+eventloop had event NOTIFY_LOG_INFO with message Adding Module TABS
+1//7::eventloop had event NOTIFY_LOG_INFO with message Completed Adding Modules
+eventloop had event NOTIFY_LOG_INFO with message Completed Adding Modules
+1//7::eventloop had event NOTIFY_INIT_CONTROLLER_COMPLETE with message Completed Adding Modules
+eventloop had event NOTIFY_INIT_CONTROLLER_COMPLETE with message Completed Adding Modules
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::google_book had event READ_INI with message /var/www/html/ksf/kallimachos/wordpress/wp-content/plugins/ksf-books/modules/Google/../../google.ini
+google_book had event READ_INI with message /var/www/html/ksf/kallimachos/wordpress/wp-content/plugins/ksf-books/modules/Google/../../google.ini
+1//7::ksf_ini had event NOTIFY_LOG_DEBUG with message ksf_ini::origin::notified
+ksf_ini had event NOTIFY_LOG_DEBUG with message ksf_ini::origin::notified
+1//7::ksf_ini had event NOTIFY_LOG_DEBUG with message Calling read_ini for event READ_INI
+ksf_ini had event NOTIFY_LOG_DEBUG with message Calling read_ini for event READ_INI
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::google_book had event SETTINGS_QUERY with message google_api_key
+google_book had event SETTINGS_QUERY with message google_api_key
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::google_book had event NOTIFY_LOG_DEBUG with message Setting Google Api Key to AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI
+google_book had event NOTIFY_LOG_DEBUG with message Setting Google Api Key to AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI
+1//7::ksf_settings had event SETTING_google_api_key with message AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI
+ksf_settings had event SETTING_google_api_key with message AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI
+1//7::google_book had event SETTINGS_QUERY with message google_baseurl
+google_book had event SETTINGS_QUERY with message google_baseurl
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::google_book had event NOTIFY_LOG_DEBUG with message Setting Google Base URL to https://www.googleapis.com
+google_book had event NOTIFY_LOG_DEBUG with message Setting Google Base URL to https://www.googleapis.com
+1//7::ksf_settings had event SETTING_google_baseurl with message https://www.googleapis.com
+ksf_settings had event SETTING_google_baseurl with message https://www.googleapis.com
+1//7::google_book had event SETTINGS_QUERY with message google_endpoint
+google_book had event SETTINGS_QUERY with message google_endpoint
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::google_book had event NOTIFY_LOG_DEBUG with message Setting Google End Point to /books/v1/volumes
+google_book had event NOTIFY_LOG_DEBUG with message Setting Google End Point to /books/v1/volumes
+1//7::ksf_settings had event SETTING_google_endpoint with message /books/v1/volumes
+ksf_settings had event SETTING_google_endpoint with message /books/v1/volumes
+1//7::google_book had event NOTIFY_LOG_DEBUG with message URL https://www.googleapis.com//books/v1/volumes?key=AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI&q=isbn:9780441018697
+google_book had event NOTIFY_LOG_DEBUG with message URL https://www.googleapis.com//books/v1/volumes?key=AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI&q=isbn:9780441018697
+1//7::google_book had event NOTIFY_LOG_DEBUG with message google_book::set_header::39
+google_book had event NOTIFY_LOG_DEBUG with message google_book::set_header::39
+1//7::google_book had event NOTIFY_LOG_DEBUG with message google_book::init_curl::50
+google_book had event NOTIFY_LOG_DEBUG with message google_book::init_curl::50
+1//7::google_book had event NOTIFY_LOG_DEBUG with message google_book::curl_query::58
+google_book had event NOTIFY_LOG_DEBUG with message google_book::curl_query::58
+1//7::google_book had event NOTIFY_LOG_DEBUG with message google_book::decode_json::63
+google_book had event NOTIFY_LOG_DEBUG with message google_book::decode_json::63

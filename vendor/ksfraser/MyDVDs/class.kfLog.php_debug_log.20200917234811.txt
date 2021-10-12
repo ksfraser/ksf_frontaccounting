@@ -1,0 +1,106 @@
+1//7::eventloop had event NOTIFY_LOG_INFO with message Adding Module TABS
+eventloop had event NOTIFY_LOG_INFO with message Adding Module TABS
+1//7::eventloop had event NOTIFY_LOG_INFO with message Completed Adding Modules
+eventloop had event NOTIFY_LOG_INFO with message Completed Adding Modules
+1//7::eventloop had event NOTIFY_INIT_CONTROLLER_COMPLETE with message Completed Adding Modules
+eventloop had event NOTIFY_INIT_CONTROLLER_COMPLETE with message Completed Adding Modules
+1//7::mydvds had event READ_INI with message /var/www/html/ksf/kallimachos/wordpress/wp-content/plugins/ksf-books/modules/LocalStore/../../mydvds.ini
+mydvds had event READ_INI with message /var/www/html/ksf/kallimachos/wordpress/wp-content/plugins/ksf-books/modules/LocalStore/../../mydvds.ini
+1//7::ksf_ini had event NOTIFY_LOG_DEBUG with message ksf_ini::origin::notified
+ksf_ini had event NOTIFY_LOG_DEBUG with message ksf_ini::origin::notified
+1//7::ksf_ini had event NOTIFY_LOG_DEBUG with message Calling read_ini for event READ_INI
+ksf_ini had event NOTIFY_LOG_DEBUG with message Calling read_ini for event READ_INI
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::mydvds had event SETTINGS_QUERY with message dbhost
+mydvds had event SETTINGS_QUERY with message dbhost
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message Setting dbhost to fhsws002.ksfraser.com
+mydvds had event NOTIFY_LOG_DEBUG with message Setting dbhost to fhsws002.ksfraser.com
+1//7::ksf_settings had event SETTING_dbhost with message fhsws002.ksfraser.com
+ksf_settings had event SETTING_dbhost with message fhsws002.ksfraser.com
+1//7::mydvds had event SETTINGS_QUERY with message dbuser
+mydvds had event SETTINGS_QUERY with message dbuser
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message Setting dbuser to kalli
+mydvds had event NOTIFY_LOG_DEBUG with message Setting dbuser to kalli
+1//7::ksf_settings had event SETTING_dbuser with message kalli
+ksf_settings had event SETTING_dbuser with message kalli
+1//7::mydvds had event SETTINGS_QUERY with message dbpass
+mydvds had event SETTINGS_QUERY with message dbpass
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message Setting dbpass to kalli
+mydvds had event NOTIFY_LOG_DEBUG with message Setting dbpass to kalli
+1//7::ksf_settings had event SETTING_dbpass with message kalli
+ksf_settings had event SETTING_dbpass with message kalli
+1//7::mydvds had event SETTINGS_QUERY with message dbdb
+mydvds had event SETTINGS_QUERY with message dbdb
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message Setting dbdb to kalli
+mydvds had event NOTIFY_LOG_DEBUG with message Setting dbdb to kalli
+1//7::ksf_settings had event SETTING_dbdb with message kalli
+ksf_settings had event SETTING_dbdb with message kalli
+1//7::mydvds had event SETTINGS_QUERY with message dbtable
+mydvds had event SETTINGS_QUERY with message dbtable
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message Setting dbtable to mydvds_region1
+mydvds had event NOTIFY_LOG_DEBUG with message Setting dbtable to mydvds_region1
+1//7::ksf_settings had event SETTING_dbtable with message mydvds_region1
+ksf_settings had event SETTING_dbtable with message mydvds_region1
+1//7::mydvds had event SEEK_UPC with message 4000127201263
+mydvds had event SEEK_UPC with message 4000127201263
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message mydvds::origin::notified
+mydvds had event NOTIFY_LOG_DEBUG with message mydvds::origin::notified
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message Calling seek_UPC for event SEEK_UPC
+mydvds had event NOTIFY_LOG_DEBUG with message Calling seek_UPC for event SEEK_UPC
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message mydvds::seek_UPC::118
+mydvds had event NOTIFY_LOG_DEBUG with message mydvds::seek_UPC::118
+1//7::UPC had event NOTIFY_LOG_DEBUG with message UPC::setUPC::25
+UPC had event NOTIFY_LOG_DEBUG with message UPC::setUPC::25
+1//7::UPC had event NOTIFY_LOG_DEBUG with message UPC::setUPC::67
+UPC had event NOTIFY_LOG_DEBUG with message UPC::setUPC::67
+1//7::mydvds had event NOTIFY_LOG_DEBUG with message Set UPC
+mydvds had event NOTIFY_LOG_DEBUG with message Set UPC

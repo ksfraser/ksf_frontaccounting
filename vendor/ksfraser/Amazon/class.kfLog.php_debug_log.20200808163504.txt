@@ -1,0 +1,72 @@
+1//7::eventloop had event NOTIFY_LOG_INFO with message Adding Module TABS
+eventloop had event NOTIFY_LOG_INFO with message Adding Module TABS
+1//7::eventloop had event NOTIFY_LOG_INFO with message Completed Adding Modules
+eventloop had event NOTIFY_LOG_INFO with message Completed Adding Modules
+1//7::eventloop had event NOTIFY_INIT_CONTROLLER_COMPLETE with message Completed Adding Modules
+eventloop had event NOTIFY_INIT_CONTROLLER_COMPLETE with message Completed Adding Modules
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::ksf_ini had event SETTINGS_SAVE
+ksf_ini had event SETTINGS_SAVE
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_save for event SETTINGS_SAVE
+1//7::stump had event SETTINGS_QUERY with message aws_access_key
+stump had event SETTINGS_QUERY with message aws_access_key
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::ksf_settings had event SETTING_aws_access_key with message AKIAI3CCGH4ZGZJ4C24Q
+ksf_settings had event SETTING_aws_access_key with message AKIAI3CCGH4ZGZJ4C24Q
+1//7::stump had event SETTINGS_QUERY with message awssecret
+stump had event SETTINGS_QUERY with message awssecret
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::ksf_settings had event SETTING_awssecret with message ZdMfwascTJDn7SFW0LhOUn0esz1TU3o2P1Z3Vp0J
+ksf_settings had event SETTING_awssecret with message ZdMfwascTJDn7SFW0LhOUn0esz1TU3o2P1Z3Vp0J
+1//7::stump had event SETTINGS_QUERY with message awsassoc
+stump had event SETTINGS_QUERY with message awsassoc
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::ksf_settings had event SETTING_awsassoc with message MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwD+k0cib5QxYp5NKd4dket9ShDwzJvpcEP0LgfiZIW1zCU82A5r/vuFr1aaPOqQoN/qJEJUZU3eoEtNAm9uZed4+LHyD9BaQjrbX1WFEC/vspUNbUXFO6qkOFUOwbTT9D7yXOpT8sKMGfV4mDkgWH9qEA/aW6klJtq9uhOS6qqwIDAQAB
+ksf_settings had event SETTING_awsassoc with message MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwD+k0cib5QxYp5NKd4dket9ShDwzJvpcEP0LgfiZIW1zCU82A5r/vuFr1aaPOqQoN/qJEJUZU3eoEtNAm9uZed4+LHyD9BaQjrbX1WFEC/vspUNbUXFO6qkOFUOwbTT9D7yXOpT8sKMGfV4mDkgWH9qEA/aW6klJtq9uhOS6qqwIDAQAB
+1//7::stump had event SETTINGS_QUERY with message awscountry
+stump had event SETTINGS_QUERY with message awscountry
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+ksf_settings had event NOTIFY_LOG_DEBUG with message ksf_settings::origin::notified
+1//7::ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+ksf_settings had event NOTIFY_LOG_DEBUG with message Calling settings_query for event SETTINGS_QUERY
+1//7::ksf_settings had event SETTING_awscountry with message ca
+ksf_settings had event SETTING_awscountry with message ca
+1//7::stump had event SEEK_UPC with message Harry Potter
+stump had event SEEK_UPC with message Harry Potter
+1//7::stump had event NOTIFY_LOG_DEBUG with message stump::origin::notified
+stump had event NOTIFY_LOG_DEBUG with message stump::origin::notified
+1//7::stump had event NOTIFY_LOG_DEBUG with message Calling seek_ISBN for event SEEK_UPC
+stump had event NOTIFY_LOG_DEBUG with message Calling seek_ISBN for event SEEK_UPC
+1//7::stump had event NOTIFY_LOG_DEBUG with message seek_ISBN
+stump had event NOTIFY_LOG_DEBUG with message seek_ISBN
+1//7::stump had event NOTIFY_LOG_DEBUG with message run
+stump had event NOTIFY_LOG_DEBUG with message run

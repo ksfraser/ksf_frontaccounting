@@ -1,0 +1,173 @@
+<?
+
+//Converting to use DOM
+
+require_once( 'extract_start_end.php' );
+class chaptersData 
+{
+	var $UPC;
+	var $Title;
+	var $Genre;
+	var $Media;
+	var $Year;
+	var $IMDBNumber;
+	var $ASIN;
+	var $ChaptersDetailspage;
+	var $CoverImage;
+	var $ISBN;
+	var $format;
+	var $publisher;
+	var $keywords;
+	var $MPAArating;
+	var $Comments;
+	var $Summary;
+	var $userrating;
+	var $numberofdisks;
+	var $releasedate;
+	var $location;
+	var $inventorydate;
+	function __construct( $upc )
+	{
+		$this->UPC = $upc;
+		return;
+	}
+}
+ 
+function getChapters($upc)
+{
+	$cData = new chaptersData($upc);
+	$html = downloadChapters( $upc );
+	extractChapters( $html, $cData );
+	return $cData;
+}
+
+function downloadChapters( $upc )
+{
+	//Note that Chapters can/will return multiple results for given query.
+	$contents = "";
+	$url = 'http://www.chapters.indigo.ca/home/search/?keywords=' . $upc . '&pageSize=12';
+	$data = file_get_contents( $url );
+	$fp = fopen( "data/" . $upc . ".chaptors.data.txt", "w" );
+	fwrite( $fp, $data );
+	fclose( $fp );
+	return $data;
+}
+
+function getSection( $dom, $type, $tag )
+{
+ 	$sections = $dom->query("*/" . $type . "[@class='" . $tag . "']");
+        if( !is_null( $sections ) )
+        {
+                foreach( $sections as $section )
+                {
+                        $returnVal = $author->nodeValue;
+                }
+        }
+	return $returnVal;
+}
+
+function extractChapters($data, $cData)
+{
+	$doc = new DOMDocument();
+	@$doc->loadHTML( $data );
+
+	/*
+	$dom->preserveWhiteSpace = false;
+	$element = $dom->getElementById('navigation');
+	echo $element->nodeValue;
+	*/
+
+	$dom_xpath = new DOMXpath($doc);
+
+	// if you want to get the div with id=interestingbox
+//<a href="/home/books/helix-war/9780756407384-item.html?ikwid=9780756407384&ikwsec=Home&gcs_requestid=0CICr_52BkrYCFQXS5wod2l0AAA"><img src="http://dynamic.indigoimages.ca/books/0756407389.jpg?width=140&quality=85&maxheight=200&sale=0&header=blank.gif&lang=en&z=207072000" alt="Helix War" data-drag="{&quot;pid&quot;:&quot;978075640738&quot;,&quot;catalogue&quot;:&quot;Books&quot;,&quot;quantity&quot;:1,&quot;minAllowed&quot;:1,&quot;dropped&quot;:null,&quot;listId&quot;:null,&quot;title&quot;:&quot;Helix War&quot;,&quot;price&quot;:&quot;9.99&quot;,&quot;omnitureRef&quot;:&quot;Search Home: \u00279780756407384\u0027&quot;}" /></a>
+	$images = $dom_xpath->query("*/div[@class='imgContainer']");
+	if (!is_null($images)) {
+	  foreach ($images as $image) {
+	    echo "\n[". $image->nodeName. "]";
+	    $nodes = $image->childNodes;
+	    foreach ($nodes as $node) {
+	      echo $node->nodeValue. "\n";
+	//$cData->CoverImage = ???;
+
+//<li class="productTitle"><a id="ctl00_MainContent_SearchResults_SearchResultsRepeater_ctl00_ProductLink" title="Helix War" href="/home/books/helix-war/9780756407384-item.html?ikwid=9780756407384&amp;ikwsec=Home&amp;gcs_requestid=0CICr_52BkrYCFQXS5wod2l0AAA">Helix War</a></li>
+
+
+	$cData->Title = getSection( $dom_xpath, "li", "productTitle" );
+/*
+	$titles = $dom_xpath->query("*" . "/li[@class='productTitle']");
+	if( !is_null( $titles ) )
+	{
+		foreach( $titles as $title )
+		{
+			$cData->Title = $title->nodeValue;
+		}
+	}
+*/
+//<span class="contributor">by  <a href="/home/contributor/Author/Edward-Willett" class="byLink">Edward Willett</a><br />^
+	$cData->Comments = getSection( $dom_xpath, "span", "contributor" );
+/*
+	$authors = $dom_xpath->query("*" . "/span[@class='contributor']");
+	if( !is_null( $authors ) )
+	{
+		foreach( $authors as $author )
+		{
+			$cData->Comments = $author->nodeValue;
+		}
+	}
+*/
+
+// <span class="format">Mass Market Paperbound</span>
+	$cData->Media = getSection( $dom_xpath, "span", "format" );
+	$cData->format = $cData->Media;
+/*
+	$formats = $dom_xpath->query("*" . "/span[@class='format']");
+	if( !is_null( $formats ) )
+	{
+		foreach( $formats as $format )
+		{
+			$cData->format = $format->nodeValue;
+			$cData->Media = $format->nodeValue;
+		}
+	}
+*/
+
+//<div class="rating five_stars" data-rating="5">          <span></span> </div>
+	$cData->userrating = getSection( $dom_xpath, "div", "rating" );
+/*
+	$ratings = $dom_xpath->query("*" . "/div[@class='rating']");
+	if( !is_null( $ratings ) )
+	{
+		foreach( $ratings as $rating )
+		{
+var_dump( $rating );
+			$cData->userrating = $rating->nodeValue;
+		}
+	}
+*/
+
+//<li class="productDesc">^M
+//                <span class="description">Marseguro, a water world far distant from Earth, is home to a small colony of both unmodified humans and the Selkies, a water-dwelling race created by geneticist Victor Hansen from modified human DNA. For seventy years the Selkies and the unmodified landlings have dwelled together in peace, safe...</span>^M
+//                <span class="viewDetails"><a id="ctl00_MainContent_SearchResults_SearchResultsRepeater_ctl00_ProductViewDetailsLink" href="/home/books/helix-war/9780756407384-item.html?ikwid=9780756407384&amp;ikwsec=Home&amp;gcs_requestid=0CICr_52BkrYCFQXS5wod2l0AAA">See Details</a></span>^M
+//            </li>^M
+
+	$cData->Summary = getSection( $dom_xpath, "span", "description" );
+/*
+	$descriptions = $dom_xpath->query("*" . "/span[@class='description']");
+	if( !is_null( $descriptions ) )
+	{
+		foreach( $descriptions as $description )
+		{
+			$cData->Summary = $description->nodeValue;
+		}
+	}
+	return;
+*/
+}
+
+
+
+//Test
+var_dump( getChapters( $argv[1] ) );
+
+?>
