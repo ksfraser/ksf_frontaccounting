@@ -72,7 +72,8 @@ class ksf_file extends fa_origin
 	{
 		if( !isset( $this->path ) )
 			throw new Exception( "Path variable not set" );
-		if( !isset( $this->filename )  )									throw new Exception( "filename variable not set" );
+		if( !isset( $this->filename )  )									
+			throw new Exception( "filename variable not set" );
 	}
 
 }

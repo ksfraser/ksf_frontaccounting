@@ -49,6 +49,9 @@ class origin
 	protected $eventloop;		//!< object
 	protected $client;		//!< object what object instantiated this object
 	protected $interestedin;	//!< array
+	protected $obj_var_name_arr;	//Array of field names in this object that need to be translated in the NVL array
+	protected $dest_var_name_arr;	//Array of field names in the DEST Object for translating.
+	protected $name_value_list;
 
 	/************************************************************************//**
 	 *constructor
@@ -68,12 +71,69 @@ class origin
 	 *
 	 *@param $loglevel int PEAR log levels
 	 * @param client Object that uses us.
+	 * @param param_arr array parameters to set
 	 * @returns null
 	 * ***************************************************************************/
-	function __construct( $loglevel = PEAR_LOG_DEBUG, $client = null )
+	function __construct( $loglevel = PEAR_LOG_DEBUG, $client = null, $param_arr = null )
 	{
 		if( isset( $client ) )
-			$this->client = $client;
+		{
+			if( is_object( $client ) )
+				$this->set( "client", $client );
+			else
+			if( is_array( $client ) )
+			{
+				//Other version of the class had params as 2nd var
+				$this->handleParam( $client );
+			}
+		}
+		if( isset( $param_arr ) )
+		{
+			$this->handleParam( $client );
+		}
+		$this->fa_specific_init();
+		$this->loglevel = $loglevel;
+		$this->error = array();
+		$this->log = array();
+		//Set, with end of constructor values noted
+		$this->object_var_names();
+		$this->dest_var_name_arr = array();
+		$this->name_value_list = array();
+		$this->build_interestedin();
+		//$this->register_with_eventloop();
+	}
+	/**//***************************************************************************
+	* Take an array of initialization paramaters and handle
+	*
+	* @param array paramaters.
+	*
+	********************************************************************************/
+	function handleParam( (array) $param_arr )
+	{
+		if( is_array( $param_arr ) )
+		{
+			foreach( $param_arr as $key=>$val)
+			{
+				//Set those values.  But only do native ones
+				$this->set( $key, $val, true );
+			}
+		}
+		else
+		{
+			throw new Exception( "Expecting an array of parameters!  Not an array", KSF_INVALID_DATA_TYPE );
+		}
+		return true;
+	}
+	/**//***************************************************************************
+	* Initialize FA items we need
+	*
+	* This class started as a generic base for FrontAccounting modules I was writing.
+	* This function takes over the FA specific code from the constructor.
+	* @param none uses globals.  Sets tb_pref
+	*
+	********************************************************************************/
+	function fa_specific_init()
+	{
 		global $db_connections;
 		if( isset( $_SESSION['wa_current_user'] ) )
 		{
@@ -89,13 +149,6 @@ class origin
 			$this->tb_pref = $db_connections[$compnum]['tbpref'];	//FrontAccounting specific
 		else
 			$this->set( 'tb_pref', $compnum . "_", false );	//FrontAccounting specific
-		$this->loglevel = $loglevel;
-		$this->error = array();
-		$this->log = array();
-		//Set, with end of constructor values noted
-		$this->object_var_names();
-		$this->build_interestedin();
-		//$this->register_with_eventloop();
 	}
 	/***************************************************//**
 	*
@@ -128,7 +181,6 @@ class origin
 	 * Magic getter to bypass referencing plugin.
 	 *
 	 * @param $prop
-	 *
 	 * @return mixed
 	 */
 	function __get( $prop ) {
@@ -140,7 +192,6 @@ class origin
 
 		return $this->{$prop};
 	}
-
 	/**
 	 * Magic isset to bypass referencing plugin.
 	 *
@@ -158,13 +209,21 @@ class origin
 	 * @return bool
 	 */
 	function is_supported_php() {
+		if( ! isset( $this->min_php ) )
+		{
+			throw new Exception( "Can't compare against min_php as it isn't set", KSF_FIELD_NOT_SET );
+		}
 		if ( version_compare( PHP_VERSION, $this->min_php, '<' ) ) {
 		    return false;
 		}
-
 		return true;
 	}
-
+	/**//***********************************************************************
+	* Convert the object variables into an array
+	*
+	* @param none
+	* @returns none sets internal
+	***************************************************************************/
 	function object_var_names()
 	{
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
@@ -182,6 +241,12 @@ class origin
 		$this->object_fields = $rtn;
 	}
 	//STUB until I can code module and data access...
+	/**//*****************************************************************************************
+	* User Access Control function (STUB)
+	*
+	* @param integer the access level
+	* @return bool
+	***********************************************************************************************/
 	function user_access( $action )
 	{
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
@@ -245,6 +310,16 @@ class origin
 		else
 			throw new Exception( "Value to be set not passed in for field " . $field, KSF_VALUE_NOT_SET );
 	}
+	/**//*******************************************
+	 * Nullify a field
+	 *
+	 * @param field string variable to nullify
+	 */
+	function unset_var( $field )
+	{
+		$this->$field = null;
+		unset( $this->$field );
+	}
 	/***************************************************//**
 	 * Most of our existing code does not use TRY/CATCH so we will trap here
 	 *
@@ -272,6 +347,13 @@ class origin
  */
 		return;
 	}
+	/**//************************************************************************
+	* Getter function.  Return the value of the field.
+	*
+	* @param string field name to return
+	* @returns mixed value of the field
+	*
+	*****************************************************************************/
 	function get( $field )
 	{
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
@@ -284,12 +366,17 @@ class origin
 			throw new Exception( $e->getMessage, $e->getCode );
 		}
 		*/
-
 		if( isset( $this->$field ) )
 			return $this->$field;
 		else
 			throw new Exception( __METHOD__ . "  Field not set.  Can't GET " . $field, KSF_FIELD_NOT_SET );
 	}
+	/**//********************************************************************************
+	* Wrapper to ->get
+	*
+	* @param string field name
+	* @returns mixed value of the field
+	************************************************************************************/
 	function get_var( $var )
 	{
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
@@ -314,37 +401,110 @@ class origin
 	{
 	}
 	 * *********************************/
+	/**//***********************************************************************************************
+	* Take a list of fields (->fields) and create an array (->data) of their values
+	*
+	* @param none uses ->fields
+	* @return array ->data
+	***************************************************************************************************/
 	/*@array@*/function var2data()
 	{
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
 
+		if( ! is_array( $this->fields ) )
+		{
+			throw new Exception( "Field we are dependant on (->fields) is not set", KSF_FIELD_NOT_SET );
+		}
+		if( ! isset( $this->data ) )
+		{
+			$this->data = array();
+		}
 		foreach( $this->fields as $f )
 		{
 			$this->data[$f] = $this->get_var( $f );
 		}
+                return $this->data;
 	}
+	/**//***********************************************************************************************
+	* Take a list of fields and create an array (->data) of their values
+	*
+	* @param array fieldlist
+	* @return array ->data
+	***************************************************************************************************/
 	/*@array@*/function fields2data( $fieldlist )
         {
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
-
+		if( ! is_array( $fieldlist ) )
+		{
+			throw new Exception( "Inputted data was not an array", KSF_INVALID_DATA_TYPE );
+		}
+		if( ! isset( $this->data ) )
+		{
+			$this->data = array();
+		}
                 foreach( $fieldlist as $field )
                 {
                         $this->data[$field] = $this->get_var( $field );
                 }
                 return $this->data;
 	}
+	/**//***********************************************************************************************
+	* Append a message onto our internal ->errors array
+	*
+	* @param string message
+	* @param int LOGGING LEVEL
+	* @returns nonwe
+	*****************************************************************************************************/
 	
 	/*@NULL@*/function LogError( $message, $level = PEAR_LOG_ERR )
 	{
+		if( ! isset( $this->errors ) )
+		{
+			$this->errors = array();
+		}
 		if( $level <= $this->loglevel )
 			$this->errors[] = $message;
 		return;
 	}
+	/**//***********************************************************************************************
+	* Append a message onto our internal ->log array
+	*
+	* @param string message
+	* @param int LOGGING LEVEL
+	* @returns nonwe
+	*****************************************************************************************************/
 	/*@NULL@*/function LogMsg( $message, $level = PEAR_LOG_INFO )
 	{
+		if( ! isset( $this->loglevel ) )
+		{
+			$this->loglevel = array();
+		}
 		if( $level <= $this->loglevel )
 			$this->log[] = $message;
 		return;
+	}
+	/***************************************************************//**
+	* Create a Name-Value pair as part of an array.  Can replace KEYS
+	*
+	* @param none
+	* @returns array Name-Value list
+	******************************************************************/
+ 	/*@array@*/function objectvars2array()
+        {
+                $val = array();
+                foreach( get_object_vars( $this ) as $key => $value )
+                {
+			if( count( $this->dest_var_name_arr ) > 0 )
+			{
+				//No point trying to convert key names if we don't have destination names to convert to.
+                        	$key = str_replace( $this->obj_var_name_arr, $this->dest_var_name_arr, $key );
+			}
+			//if( "id" != $key )	//Not used for CREATE but needed for UPDATE.
+				if( isset( $this->$key ) )
+		                        $val[] = array( "name" => $key, "value" => $this->$key );
+                }
+		$this->name_value_list = $val;
+                return $val;
 	}
 	/******SPL EventLoop Funcs ********************************************/
 	/****************//**

@@ -160,8 +160,9 @@ class eventloop extends kfLog implements splSubject
         /*****************************************************************************//**
          *ObserverNotify loops throug observers and tells interested ones about the event
          *
+	 * @param stdClass object triggering the event
          * @param string event to match against
-         * @data mixed ideally is the object that triggered the event
+         * @param mixed ideally is the object that triggered the event
          *
          * *******************************************************************************/
         function ObserverNotify( $trigger_class, $event, $msg )

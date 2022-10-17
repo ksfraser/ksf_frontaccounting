@@ -5,6 +5,10 @@ $path_to_faroot = dirname ( realpath ( __FILE__ ) ) . "/../../";
 //global $path_to_root;
 //require_once( $path_to_faroot . '/includes/db_pager.inc' );
 
+/**//**********************************************************
+* This is a FrontAccounting specific VIEW class
+*
+**************************************************************/
 class VIEW extends origin
 {
 	var $js;
@@ -19,13 +23,24 @@ class VIEW extends origin
 	var $table_width;
 	var $client;
 	var $model;
+	protected $use_popup_window;	//!<bool
+	public $help_context;
+	protected $table_style;		//!<integer def TABLESTYLE
 
-	function __construct( $client = null )
+	/**//**********************************************************************
+	*
+	*
+	***************************************************************************/
+	function __construct( $client = null, $use_popup_window = FALSE )
 	{
+		parent::__construct();
 		$this->use_js();
 		$this->set_var( "page_mode", "simple" );
 		$this->set_var( "use_date_picker", FALSE );
+		$this->set_var( "use_popup_window", $use_popup_window );
 		$this->set_var( "table_width", "70%" );
+		$this->set( "table_style", TABLESTYLE );
+
 		if( isset( $client ) )
 			$this->set_var( "client", $client );
 		if( isset( $client->model ) )
@@ -35,6 +50,20 @@ class VIEW extends origin
 	}
 	function __destruct()
 	{
+	}
+	function Page()
+	{
+		if( ! isset( $this->help_context ) )
+		{
+			//Seeing as we set it during constructor...
+			throw new Exception( "Help Context not set.  What happened?", KSF_FIELD_NOT_SET );
+		}
+		if( ! isset( $this->js ) )
+		{
+			//Seeing as we set it during constructor...
+			throw new Exception( "JS not set.  What happened?", KSF_FIELD_NOT_SET );
+		}
+		page(_($help_context = $this->help_context ), false, false, "", $this->js);
 	}
 	function add_submenu()
 	{
@@ -86,9 +115,15 @@ class VIEW extends origin
 	{
 		start_form();
 	}
+	/**//***********************
+	* Create a new Table
+	*
+	* Normally would do sanity check on variables but they are set in the constructor.
+	*
+	**************************/
 	function new_table()
 	{
-		start_table(TABLESTYLE, "width=75%");
+		start_table( $this->get( "table_style" ), "width=" . $this->get( "table_width" ) . "%");
 	}
 	function table_header()
 	{
@@ -193,6 +228,8 @@ class VIEW extends origin
 		$this->js = "";
 		if ($this->use_date_picker)
         		$this->js .= get_js_date_picker();
+		if( $this->use_popup_window )
+			$this->js .= get_js_open_window(900, 500);
 
 		/*Mantis 212?  PAGE can't redeclare help_url
 		 * Obviously Page has already been called

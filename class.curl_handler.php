@@ -37,9 +37,18 @@ class curl_handler
 	        $this->params = $parameters;
 	        $this->headers    = $headers;
 		$this->data       = $data;
-		$this->curl_handle = curl_init( $this->URL );
+		/***
+		 * Changing to how example.login.php init's the connection and URL
+		 */
+		//$this->curl_handle = curl_init( $this->URL );
+		$this->curl_handle = curl_init();
+		$this->curl_setopt( CURLOPT_URL, $URL );
+		/*** !example.loging.php */
 		//save response headers
+		/***
+		*20220705 Can't call this function
 		$this->curl_setopt( CURLOPT_HEADERFUNCTION, array( $this, 'curl_stream_headers' ) );
+		*/
 	}
 	function __destruct()
 	{
@@ -51,8 +60,17 @@ class curl_handler
 		}
 		 
 	}
+	function set( $field, $val )
+	{
+		$this->$field = $val;
+	}
+	function get( $field )
+	{
+		return $this->$field;
+	}
 	function curl_setopt( $key, $value )
 	{
+		$this->$key = $value;
 		return curl_setopt( $this->curl_handle, $key, $value );
 	}
 	/**
@@ -143,7 +161,9 @@ class curl_handler
 			$this->http_code = curl_getinfo( $this->curl_handle, CURLINFO_HTTP_CODE );
 			$this->curlinfoarray = curl_getinfo( $this->curl_handle);
 		}
-		return;
+		//20220705 was solely return.  Return  true
+		return true;
+
 	}
 	/***************************************************//**
 	 *Take an array of Curl Options and pass to Curl
@@ -153,6 +173,10 @@ class curl_handler
 	 * ****************************************************/
 	function curlopts2curl( $curlopts )
 	{
+		if( ! is_array( $curlopts ) )
+		{
+			return null;
+		}
 		foreach( $curlopts as $key=>$value )
 		{
 			$res = $this->curl_setopt( $key, $value );

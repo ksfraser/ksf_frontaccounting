@@ -132,7 +132,10 @@ class table_interface
 		if( !isset( $field )  )
 			throw new Exception( "Fields not set", KSF_FIELD_NOT_SET );
 		if( ! isset( $this->fields_array ) )
+		{
 			debug_print_backtrace();
+			return FALSE;
+		}
 		foreach( $this->fields_array as $row )
 		{
 			if( $field == $row['name'] )
@@ -250,6 +253,7 @@ class table_interface
 			{
 				$this->$name = $row[$name];
 				if( $set_caller AND isset( $this->caller ) )
+				{
 					try
 					{
 						$this->caller->set( $name, $this->$name );
@@ -261,6 +265,7 @@ class table_interface
 						//HOWEVER if set_caller is true, they are expecting the value.
 						throw $e;
 					}
+				}
 			}
 		}
 		$this->notify( __METHOD__ . ":" . __LINE__ . " Exiting " . __METHOD__, "WARN" );
@@ -269,7 +274,10 @@ class table_interface
 	/*******************************************************************************************************************//**
 	 * Select from the table with defined values.  NOT setup to handle joins or subselects
 	 *
-	 * @param array list of fields to select array( 'fieldname' => 'select as name' )
+	 * TODO: handle array for field list
+	 *
+	 * @param string list of fields to select "a,b,c as cost"
+	 *			Eventually make it into an array....array( 'fieldname' => 'select as name' )
 	 * @param array list of WHERE conditions array( 'field1' => 'equal to value' )
 	 * @param array list of fields  array( 'field1', 'field2', ...)
 	 * @param int limit
@@ -365,7 +373,7 @@ class table_interface
 			throw new Exception( "Primary Key not set", PRIMARY_KEY_NOT_SET );
 		$sql = "DELETE from " . $this->table_details['tablename'] . " WHERE " . $pri . " = '" . $this->$pri . "'";
 		//var_dump( $sql );
-		db_query( $sql, "Couldn't update table " . $this->table_details['tablename'] . " for key " .  $pri );	
+		db_query( $sql, "Couldn't delete table " . $this->table_details['tablename'] . " for key " .  $pri );	
 		//throw new Exception( $sql );	//Causes FA to display_error the msg.  Useful for debugging.
 		$this->notify( __METHOD__ . ":" . __LINE__ . " Exiting " . __METHOD__, "WARN" );
 	}
