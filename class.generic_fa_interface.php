@@ -1,12 +1,17 @@
 <?php
 
 global $path_to_root;
-
+/*
 if( strlen( $path_to_root ) < 5 )
 	$path_to_root = dirname( __FILE__ ) . "/../../";
-
+else
 require_once( $path_to_root . '/modules/ksf_modules_common/db_base.php' );	//Needed the ksf_modules_common otherwise a module directory local file was included.
 require_once( $path_to_root . '/modules/ksf_modules_common/defines.inc.php' );
+*/
+	$path_to_root = dirname( __FILE__ ) ;
+
+require_once( $path_to_root . '/db_base.php' );	//Needed the ksf_modules_common otherwise a module directory local file was included.
+require_once( $path_to_root . '/defines.inc.php' );
 
 if( ! class_exists( 'generic_fa_interface' ) )
 {
@@ -81,11 +86,10 @@ if( ! class_exists( 'generic_fa_interface' ) )
 		 *********************************************************************/
 		function __construct( $host, $user, $pass, $database, $pref_tablename )
 		{
-			//display_notification( __FILE__ . "::" . __CLASS__ . "::"  . __METHOD__ . ":" . __LINE__, "WARN" );
-			//		echo "Generic constructor pref_tablename: $pref_tablename";
 			if( !isset( $this->debug ) )
 				$this->debug = 0;
-			require_once( dirname( __FILE__ ) . '/../ksf_modules_common/class.eventloop.php' );
+			require_once( dirname( __FILE__ ) . '//class.eventloop.php' );
+
 			/* Mantis 214 bad moduledir on eventloop constructor leading to failed loading.
 							//moduledir, caller
 			//$this->eventloop = new eventloop(  null, $this );
@@ -220,7 +224,9 @@ if( ! class_exists( 'generic_fa_interface' ) )
 		{
 			//display_notification( __FILE__ . "::" . __CLASS__ . "::"  . __METHOD__ . ":" . __LINE__, "WARN" );
 			if( isset( $this->preftable ) )
-				$this->create_prefs_tablename();
+				return $this->create_prefs_tablename();
+			else
+				throw new Exception( "Prefs Table name note set", KSF_FIELD_NOT_SET );
 		}
 		function install()
 		{
@@ -237,7 +243,7 @@ if( ! class_exists( 'generic_fa_interface' ) )
 		}
 		function checkprefs()
 		{
-			$this->updateprefs();
+			return $this->updateprefs();
 		}
 		function call_table( $action, $msg )
 		{
@@ -251,7 +257,7 @@ if( ! class_exists( 'generic_fa_interface' ) )
 		}
 		function action_show_form()
 		{
-			$this->show_config_form();
+			return $this->show_config_form();
 		}
 		function show_config_form()
 		{

@@ -4,9 +4,12 @@
 
 require_once( 'defines.inc.php' );	//defines path_to_faroot
 //global $path_to_faroot;
+
+/*
 $path_to_faroot = __DIR__ . '/../..';
 require_once( $path_to_faroot . '/includes/db/connect_db.inc' ); //db_query, ...
 require_once( $path_to_faroot . '/includes/errors.inc' ); //check_db_error, ...
+*/
 
 require_once( 'class.origin.php' );
 /***************************************************************//**

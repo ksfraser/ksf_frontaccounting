@@ -89,14 +89,18 @@ class origin
 		}
 		if( isset( $param_arr ) )
 		{
-			$this->handleParam( $client );
+			$this->handleParam( $param_arr );
 		}
 		$this->fa_specific_init();
 		$this->loglevel = $loglevel;
-		$this->error = array();
+		$this->errors = array();
 		$this->log = array();
+		$this->application = "";
+		$this->module = "";
 		//Set, with end of constructor values noted
-		$this->object_var_names();
+		$this->object_var_names();		//Sets object_fields
+		$this->container_arr = array();
+		$this->obj_var_name_arr = array();
 		$this->dest_var_name_arr = array();
 		$this->name_value_list = array();
 		$this->build_interestedin();
@@ -108,7 +112,7 @@ class origin
 	* @param array paramaters.
 	*
 	********************************************************************************/
-	function handleParam( (array) $param_arr )
+	function handleParam( $param_arr )
 	{
 		if( is_array( $param_arr ) )
 		{
@@ -149,6 +153,7 @@ class origin
 			$this->tb_pref = $db_connections[$compnum]['tbpref'];	//FrontAccounting specific
 		else
 			$this->set( 'tb_pref', $compnum . "_", false );	//FrontAccounting specific
+		$this->set( "help_context", "Default HELP" );
 	}
 	/***************************************************//**
 	*
@@ -672,7 +677,10 @@ class origin
         function build_interestedin()
         {
 		//$this->tell_eventloop( $this, "NOTIFY_LOG_DEBUG", get_class( $this ) . "::" . __METHOD__ );
-
+		if( ! isset( $this->interestedin ) OR ! is_array( $this->interestedin ) )
+		{
+			$this->interestedin = array();
+		}
                 //This NEEDS to be overridden
                 $this->interestedin[KSF_DUMMY_EVENT]['function'] = "dummy";
                 $this->interestedin["SETTINGS_APP_LOG_LEVEL"]['function'] = "app_log_level";
