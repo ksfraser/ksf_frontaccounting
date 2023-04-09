@@ -1,5 +1,7 @@
 <?php
 
+//20230408 Adding the fputs/fopen/fclose/... into ksf_file
+
 require_once( 'class.fa_origin.php' );
 
 class ksf_file extends fa_origin
@@ -8,43 +10,111 @@ class ksf_file extends fa_origin
 	protected $filename;	//!< @var string name of output file
 	protected $tmp_dir;	//!< @var string temporary directory name
 	protected $path;	//!<DIR where are the images stored.  default company/X/images...
+	protected $mode;
+	protected $outstring;	//!<string to write out by fputs
 	function __construct( $filename = "file.txt" )
 	{
 		parent::__construct();
 		$this->filename = $filename;
 		$this->path = company_path() . '/images';
+		$this->mode = 'r';
 	}
 	function __destruct()
 	{
 		if( isset( $this->fp ) )
 			$this->close();
 	}
+	/**//******************************************
+	 * Open a file READ ONLY
+	 *
+	 *
+	 **********************************************/
 	function open()
 	{
 		$this->validateVariables();
 		if( strlen( $this->path ) > 1 )
-			$this->fp = fopen( $this->path . '/' . $this->filename, 'r' );
+			$this->fopen(  $this->path . '/' . $this->filename );
 		else
-			$this->fp = fopen( $this->filename, 'r' );
-		if( !isset( $this->fp ) )
-			throw new Exception( "Unable to set Fileponter when trying to open ". $this->filename );	
+			$this->fopen( $this->filename );
 	}
+	/**//******************************************
+	 * A function to match the library ones.
+	 *
+	 *	As we are matching library functions, our assumption
+	 *	is that the filename is the complete path. 
+	 *
+	 **********************************************/
+	function fopen( $filename = null, $mode = null )
+	{
+		if( null !== $filename )
+		{
+			$this->set( "filename", $filename );
+		}
+		if( null !== $mode )
+		{
+			$this->set( "mode", $mode );
+		}
+
+		if( isset( $this->filename ) )
+		{
+			if ( ($this->fp = fopen( $this->filename, $this->mode ) ) === FALSE)
+			{
+        			throw new Exception( "Can't open file" );
+			}
+		}
+	}
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
 	function open_for_write()
 	{
 		$this->validateVariables();
-		$this->fp = fopen( $this->path . '/' . $this->filename, 'w' );
-		if( !isset( $this->fp ) )
-			throw new Exception( "Unable to set Fileponter when trying to open ". $this->filename );	
+		if( strlen( $this->path ) > 1 )
+			$this->fopen(  $this->path . '/' . $this->filename, 'w' );
+		else
+			$this->fopen( $this->filename, 'w' );
 	}
-	function close()
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
+	function fclose()
 	{
 		if( !isset( $this->fp ) )
 			throw new Exception( "Trying to close a Fileponter that isn't set" );
-		fflush( $this->fp );
 		fclose( $this->fp );
 		$this->fp = null;
 	}
-	/*@bool@*/function make_path()
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
+	function fflush()
+	{
+		if( !isset( $this->fp ) )
+			throw new Exception( "Trying to flush a Fileponter that isn't set" );
+		fflush( $this->fp );
+	}
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
+	function close()
+	{
+		$this->fflush();
+		$this->fclose();
+	}
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
+	/*@bool@*/function mkdir()
 	{
 		$this->validateVariables();
 		if( !$this->pathExists() )
@@ -52,10 +122,44 @@ class ksf_file extends fa_origin
 		//Did we succeed?
 		return $this->pathExists();
 	}
-	/*@bool@*/function pathExists()
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
+	/*@bool@*/function make_path()
+	{
+		return $this->mkdir();
+	}
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
+	/*@bool@*/function is_dir()
 	{
 		$this->validateVariables();	
 		return is_dir( $this->path );
+	}
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
+	/*@bool@*/function pathExists()
+	{
+		return $this->is_dir();
+	}
+	/***************************************************************
+	 * Check for the existance of a file
+	 *
+	 * 
+	 * @return bool
+	 * *************************************************************/
+	/*@bool@*/function file_exists()
+	{
+		$this->validateVariables();
+		return file_exists( $this->path . '/' . $this->filename );
 	}
 	/***************************************************************
 	 * Check for the existance of a file
@@ -65,9 +169,13 @@ class ksf_file extends fa_origin
 	 * *************************************************************/
 	/*@bool@*/function fileExists()
 	{
-		$this->validateVariables();
-		return file_exists( $this->path . '/' . $this->filename );
+		return $this->file_exists();
 	}
+	/**//******************************************
+	 *
+	 *
+	 *
+	 **********************************************/
 	function validateVariables()
 	{
 		if( !isset( $this->path ) )
@@ -75,7 +183,44 @@ class ksf_file extends fa_origin
 		if( !isset( $this->filename )  )									
 			throw new Exception( "filename variable not set" );
 	}
-
+	/**//******************************************
+	 * Put a string to a filepointer
+	 *
+ 	 * As we are using our internal file pointer, we can NULL
+	 * the fpo_unused and set outstring, or we can ONLY set
+	 * fpo_unused.  If fpo_unused isn't a FP/Stream we will
+	 * assume it's the string if outstring is NULL.
+	 *
+	 * If both are NULL we will write the internal ->outstring
+	 *
+	 * @var filepointer  UNUSED we will use our internal one!
+	 * @var string 
+	 *
+	 **********************************************/
+	function fputs( $fpo_unused = "", $outstring = null )
+	{
+		if( null === $outstring )
+		{
+			if(get_resource_type($fpo_unused) !== 'file' AND get_resource_type($fpo_unused) !== 'stream') 
+			{
+				//Going to assume the 1 variable is the string to write out
+				if ( is_string($fpo_unused) )
+				{
+					$this->outstring = $fpo_unused;
+				}
+			}
+		}
+		else
+		if( is_string($outstring) )
+		{
+			$this->outstring = $outstring;
+		}
+		else
+		{
+			throw new Exception( "outstring isn't a string." );
+		}
+		fputs( $this->fp, $this->outstring );
+	}
 }
 
 require_once( 'class.ksf_ui.php' );
@@ -112,8 +257,8 @@ class ksf_file_upload extends ksf_file
 	}
 	function open()
 	{
-		$this->validateVariables();
-		$this->fp = fopen( $this->path . '/' . $this->filename, 'w' );
+		$this->set( "mode", "w" );
+		parent::open();
 		if( !isset( $this->fp ) )
 			throw new Exception( "Unable to set Fileponter when trying to open ". $this->filename );	
 	}
