@@ -4,7 +4,23 @@
 
 require_once( 'class.fa_origin.php' );
 
+/*
+if( ! defined( 'company_path' ) )
+{
+	function company_path()
+	{
+		return "/tmp/";
+	}
+}
+*/
 
+/**//****************************************
+* A class to handle file operations.
+*
+* Assumption is that each file will have its own instance of this class.
+* Setting a filename in calling a function overwrites the internal ->filename
+* and there is no keeping/reseting old variables.
+*********************************************/
 class ksf_file extends fa_origin
 {
 	protected $fp;	//!< @var handle File Pointer
@@ -12,145 +28,233 @@ class ksf_file extends fa_origin
 	protected $tmp_dir;	//!< @var string temporary directory name
 	protected $path;	//!<DIR where are the images stored.  default company/X/images...
 	protected $mode;
-	protected $outstring;	//!<string to write out by fputs
+	protected $outstring;	//!<string what to write out (fputs)
+	protected $file_contents;	//!<binary data stream - file contents
+	protected $bDeleteFile;	//!<bool should we delete the file once we are done with it.
+	protected $linecount;	//!<int
+	protected $perms;	//!<int File permissions.  Default 0777
+	protected $recursive;	//!<bool	Should mkdir recursively create directories to generate path.  Default false
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
 	function __construct( $filename = "file.txt", $path = null )
 	{
 		parent::__construct();
 		$this->filename = $filename;
+		$this->bDeleteFile = false;
 		if( null !== $path )
-			$this->path = $path;
-		$this->mode = 'r';
+		{
+                        $this->path = $path;
+		}
+		else if( function_exists( company_path ) )
+		{
+			//We are in an FA module
+			$this->path = company_path() . '/images';
+		}
+                $this->mode = 'r';
+		$this->perms = 0777;
+		$this->recursive = false;
 	}
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
 	function __destruct()
 	{
 		if( isset( $this->fp ) )
 			$this->close();
-	}
-	/**//******************************************
-	 * Open a file READ ONLY
-	 *
-	 *
-	 **********************************************/
-	function open()
-	{
-		$this->validateVariables();
-		if( strlen( $this->path ) > 1 )
-			$this->fopen(  $this->path . '/' . $this->filename );
-		else
-			$this->fopen( $this->filename );
-	}
-	/**//******************************************
-	 * A function to match the library ones.
-	 *
-	 *	As we are matching library functions, our assumption
-	 *	is that the filename is the complete path. 
-	 *
-	 **********************************************/
-	function fopen( $filename = null, $mode = null )
-	{
-		if( null !== $filename )
+		if( $this->bDeleteFile )
 		{
-			$this->set( "filename", $filename );
-		}
-		if( null !== $mode )
-		{
-			$this->set( "mode", $mode );
-		}
-
-		if( isset( $this->filename ) )
-		{
-			if ( ($this->fp = fopen( $this->filename, $this->mode ) ) === FALSE)
+			if( file_exists( $this->filename ) )
 			{
-        			throw new Exception( "Can't open file" );
+				unlink( $this->filename );
 			}
 		}
 	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
+	function open()
+	{
+		$this->validateVariables();
+		$this->fopen();
+		if( !isset( $this->fp ) )
+			throw new Exception( "Unable to set Fileponter when trying to open ". $this->filename );	
+	}
+        /**//******************************************
+         * A function to match the library ones.
+         *
+         *      As we are matching library functions, our assumption
+         *      is that the filename is the complete path.
+         *
+         **********************************************/
+        function fopen( $filename = null, $mode = null )
+        {
+                if( null !== $filename )
+                {
+                        $this->set( "filename", $filename );
+			$this->set( "path", "" );
+                }
+                if( null !== $mode )
+                {
+                        $this->set( "mode", $mode );
+                }
+
+                if( isset( $this->filename ) )
+                {
+			if( strlen( $this->path ) > 1 )
+				$filetoopen = this->path . '/' . $this->filename;
+			else
+				$filetoopen = $this->filename;
+                        if ( ($this->fp = fopen( $filetoopen, $this->mode ) ) === FALSE)
+                        {
+                                throw new Exception( "Can't open file" );
+                        }
+                }
+		return $this->fp;
+        }
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
 	function open_for_write()
 	{
 		$this->validateVariables();
-		if( strlen( $this->path ) > 1 )
-			$this->fopen(  $this->path . '/' . $this->filename, 'w' );
-		else
-			$this->fopen( $this->filename, 'w' );
-	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
-	function fclose()
-	{
+		$this->set( "mode", "w" );
+		$this->fopen();
 		if( !isset( $this->fp ) )
-			throw new Exception( "Trying to close a Fileponter that isn't set" );
-		fclose( $this->fp );
-		$this->fp = null;
+			throw new Exception( "Unable to set Fileponter when trying to open ". $this->filename );	
 	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
-	function fflush()
-	{
-		if( !isset( $this->fp ) )
-			throw new Exception( "Trying to flush a Fileponter that isn't set" );
-		fflush( $this->fp );
-	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
+        /**//******************************************
+         *
+         *
+         *
+         **********************************************/
+        function fclose()
+        {
+                if( !isset( $this->fp ) )
+                        throw new Exception( "Trying to close a Fileponter that isn't set" );
+                fclose( $this->fp );
+                $this->fp = null;
+        }
+        /**//******************************************
+         *
+         *
+         *
+         **********************************************/
+        function fflush()
+        {
+                if( !isset( $this->fp ) )
+                        throw new Exception( "Trying to flush a Fileponter that isn't set" );
+                fflush( $this->fp );
+        }
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
 	function close()
 	{
 		$this->fflush();
 		$this->fclose();
 	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
-	/*@bool@*/function mkdir()
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
+	/*@bool@*/function mkdir( $dir = null, $perms = 0777, $recursive = false )
 	{
 		$this->validateVariables();
+		if( $this->perms <> $perms )
+		{
+			$this->set( "perms", $perms );
+		}
+		if( $this->recursive !== $recursive )
+		{
+			$this->set( "recursive", $recursive );
+		}
 		if( !$this->pathExists() )
-			mkdir( $this->path );
+		{
+			if( null === $dir )
+				$dir = $this->path;
+			//mkdir( string $directory, int $permissions = 0777, bool $recursive = false, ?resource $context = null): bool
+			mkdir( $dir, $perms, $recursive );
+		}
 		//Did we succeed?
 		return $this->pathExists();
 	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
 	/*@bool@*/function make_path()
 	{
 		return $this->mkdir();
 	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
-	/*@bool@*/function is_dir()
-	{
-		$this->validateVariables();	
-		return is_dir( $this->path );
-	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
+        /**//******************************************
+         *
+         *
+         *
+         **********************************************/
+        /*@bool@*/function is_dir( $filename = null )
+        {
+		if( null === $filename )
+		{
+			$filename = $this->path;
+		}
+                return is_dir( $filename );
+        }
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
 	/*@bool@*/function pathExists()
 	{
-		return $this->is_dir();
+                $this->validateVariables();
+		return $this->is_dir( $this->path );
+	}
+	/***************************************************************
+	 * Check whether filename is readable
+	 *
+	 * 
+	 * @return bool
+	 * *************************************************************/
+	/*@bool@*/function is_readable( $filename = null )
+	{
+		if( null === $filename )
+		{
+			$filename = $this->path . '/' . $this->filename;
+		}
+		return is_readable($filename);
+	}
+	/***************************************************************
+	 * Check if filename is writeable
+	 *
+	 * 
+	 * @return bool
+	 * *************************************************************/
+	/*@bool@*/function is_writeable( $filename = null )
+	{
+		if( null === $filename )
+		{
+			$filename = $this->path . '/' . $this->filename;
+		}
+		return is_writeable($filename);
+	}
+	/***************************************************************
+	 * Check whether the filename is a regular file
+	 *
+	 * 
+	 * @return bool
+	 * *************************************************************/
+	/*@bool@*/function is_file( $filename = null )
+	{
+		if( null === $filename )
+		{
+			$filename = $this->path . '/' . $this->filename;
+		}
+		return is_file($filename);
 	}
 	/***************************************************************
 	 * Check for the existance of a file
@@ -158,10 +262,13 @@ class ksf_file extends fa_origin
 	 * 
 	 * @return bool
 	 * *************************************************************/
-	/*@bool@*/function file_exists()
+	/*@bool@*/function file_exists( $filename = null )
 	{
-		$this->validateVariables();
-		return file_exists( $this->path . '/' . $this->filename );
+		if( null === $filename )
+		{
+			$filename = $this->path . '/' . $this->filename;
+		}
+		return file_exists($filename);
 	}
 	/***************************************************************
 	 * Check for the existance of a file
@@ -171,58 +278,128 @@ class ksf_file extends fa_origin
 	 * *************************************************************/
 	/*@bool@*/function fileExists()
 	{
+		$this->validateVariables();
 		return $this->file_exists();
 	}
-	/**//******************************************
-	 *
-	 *
-	 *
-	 **********************************************/
+	/**//******************************************************
+	*
+	*
+	***********************************************************/
 	function validateVariables()
 	{
 		if( !isset( $this->path ) )
 			throw new Exception( "Path variable not set" );
-		if( !isset( $this->filename )  )									
+		if( !isset( $this->filename )  )			
 			throw new Exception( "filename variable not set" );
 	}
-	/**//******************************************
-	 * Put a string to a filepointer
-	 *
- 	 * As we are using our internal file pointer, we can NULL
-	 * the fpo_unused and set outstring, or we can ONLY set
-	 * fpo_unused.  If fpo_unused isn't a FP/Stream we will
-	 * assume it's the string if outstring is NULL.
-	 *
-	 * If both are NULL we will write the internal ->outstring
-	 *
-	 * @var filepointer  UNUSED we will use our internal one!
-	 * @var string 
-	 *
-	 **********************************************/
-	function fputs( $fpo_unused = "", $outstring = null )
+        /**//******************************************
+         * Put a string to a filepointer
+         *
+         * As we are using our internal file pointer, we can NULL
+         * the fpo_unused and set outstring, or we can ONLY set
+         * fpo_unused.  If fpo_unused isn't a FP/Stream we will
+         * assume it's the string if outstring is NULL.
+         *
+         * If both are NULL we will write the internal ->outstring
+         *
+         * @var filepointer  UNUSED we will use our internal one!
+         * @var string
+         *
+         **********************************************/
+        function fputs( $fpo_unused = "", $outstring = null )
+        {
+                if( null === $outstring )
+                {
+                        if(get_resource_type($fpo_unused) !== 'file' AND get_resource_type($fpo_unused) !== 'stream')
+                        {
+                                //Going to assume the 1 variable is the string to write out
+                                if ( is_string($fpo_unused) )
+                                {
+                                        $this->outstring = $fpo_unused;
+                                }
+                        }
+                }
+                else
+                if( is_string($outstring) )
+                {
+                        $this->outstring = $outstring;
+                }
+                else
+                {
+                        throw new Exception( "outstring isn't a string." );
+                }
+                fputs( $this->fp, $this->outstring );
+        }
+	/**//***************************************************************
+	* Use PHP functions to read the file contents entire.
+	*
+	* @param none uses internal variables
+	* @returns none sets internal variables
+	********************************************************************/
+	function getFileContents()
 	{
-		if( null === $outstring )
+		if( ! isset( $this->filename ) )
 		{
-			if(get_resource_type($fpo_unused) !== 'file' AND get_resource_type($fpo_unused) !== 'stream') 
-			{
-				//Going to assume the 1 variable is the string to write out
-				if ( is_string($fpo_unused) )
-				{
-					$this->outstring = $fpo_unused;
-				}
-			}
+			throw new Exception( "Filename not set.  Can't read an unspecified file", KSF_FIELD_NOT_SET );
 		}
-		else
-		if( is_string($outstring) )
-		{
-			$this->outstring = $outstring;
-		}
-		else
-		{
-			throw new Exception( "outstring isn't a string." );
-		}
-		fputs( $this->fp, $this->outstring );
+		$this->file_contents = file_get_contents($this->filename);
 	}
+	/**//***************************************************************
+	* Grab a filename from the webserver after an upload.
+	*
+	* @param int id which file (on multi upload) to grab.  Default 0
+	* @returns none sets internal variables
+	********************************************************************/
+	function uploadFileName( $id = 0 )
+	{
+		if( ! isset( $_FILES ) )
+		{
+			throw new Exception( "Can't set a filename when one not passed in", KSF_VAR_NOT_SET );
+		}
+		$this->filename = $_FILES['files']['tmp_name'][$id];
+	}
+	/**//********************************************************************************
+     	* Remove the BOM (Byte Order Mark) from the beginning of the import row if it exists
+	*
+	* This function came from SuiteCRM ImportFile
+	*
+	* @param none
+     	* @return void
+     	*/
+    	private function setFpAfterBOM()
+    	{
+        	if($this->fp === FALSE)
+            		return;
+        	rewind($this->fp);
+        	$bomCheck = fread($this->fp, 3);
+        	if($bomCheck != pack("CCC",0xef,0xbb,0xbf)) {
+            		rewind($this->fp);
+        	}
+    	}
+
+	/**//*************************************************************************
+     	* Determine the number of lines in this file.
+     	*
+     	* @return int
+     	*/
+    	function getNumberOfLinesInfile()
+    	{
+        	$lineCount = 0;
+        	if ($this->fp )
+        	{
+            		rewind($this->_fp);
+            		while( !feof($this->_fp) )
+            		{
+                		if( fgets($this->_fp) !== FALSE)
+                    			$lineCount++;
+            		}
+            		//Reset the fp to after the bom if applicable.
+            		$this->setFpAfterBOM();
+        	}
+		$this->linecount = $lineCount;
+        	return $lineCount;
+    	}
+
 }
 
 require_once( 'class.ksf_ui.php' );
@@ -259,8 +436,8 @@ class ksf_file_upload extends ksf_file
 	}
 	function open()
 	{
-		$this->set( "mode", "w" );
-		parent::open();
+		$this->validateVariables();
+		$this->fp = fopen( $this->path . '/' . $this->filename, 'w' );
 		if( !isset( $this->fp ) )
 			throw new Exception( "Unable to set Fileponter when trying to open ". $this->filename );	
 	}
@@ -404,6 +581,19 @@ class ksf_file_csv extends ksf_file
 	protected $b_skip_header;
 	private $grabbed_header;
 	protected $headerline;
+	protected $enclosure;	//!<char
+	protected $escapechar;	//!<char
+	protected $fieldcount;	//!<int
+	/**//******************************************
+	* Setup the CSV reading class file
+	*
+	* @param string filename
+	* @param int size of a line
+	* @param char separator what character separates the CSV
+	* @param bool is there a header
+	* @param bool b_skip_header skip processing the header
+	* @return none
+	***********************************************/
 	function __construct( $filename, $size, $separator, $b_header = false, $b_skip_header = false )
 	{
 		parent::__construct( $filename );
@@ -413,7 +603,16 @@ class ksf_file_csv extends ksf_file
 		$this->b_header = $b_header;
 		$this->b_skip_header = $b_skip_header;
 		$this->grabbed_header = false;
+		$this->enclosure = null;
+		$this->escapechar = null;
+		$this->fieldcount = 0;
 	}
+	/**//**************************************************
+	* Read a line from a CSV file
+	*
+	* @param none
+	* @returns array the csv line split up.
+	*******************************************************/
 	/*@array@*/function readcsv_line()
 	{
 		if( !isset( $this->fp )  )
@@ -422,17 +621,24 @@ class ksf_file_csv extends ksf_file
 			throw new Exception( __CLASS__ . " required field not set: size" );
 		if( ! isset( $this->separator ) )
 			throw new Exception( __CLASS__ . " required field not set: separator" );
-			if( $this->b_header AND !$this->grabbed_header )
-			{
-				$this->headerline = fgetcsv( $this->fp, $this->size, $this->separator );
-				$this->grabbed_header = true;
-			}
-			if( ! $this->b_header )
-				$this->headerline = '';
-			else
-			{
-			}
-			return fgetcsv( $this->fp, $this->size, $this->separator );
+		if( $this->b_header AND !$this->grabbed_header )
+		{
+			//fgetcsv( resource $stream, ?int $length = null, string $separator = ",", string $enclosure = "\"", string $escape = "\\"): array|false
+			$this->headerline = fgetcsv( $this->fp, $this->size, $this->separator, $this->enclosure, $this->escapechar );
+			$this->grabbed_header = true;
+		}
+		if( ! $this->b_header )
+			$this->headerline = '';
+		else
+		{
+		}
+		$line = fgetcsv( $this->fp, $this->size, $this->separator );
+		if( ! $this->fieldcount )
+		{
+			$this->set( "fieldcount", count( $line ) );
+		}
+		$this->linecount++;
+		return $line;
 	}
 	function readcsv_entire()
 	{
