@@ -4,6 +4,7 @@
 
 require_once( 'class.fa_origin.php' );
 
+
 class ksf_file extends fa_origin
 {
 	protected $fp;	//!< @var handle File Pointer
@@ -12,11 +13,12 @@ class ksf_file extends fa_origin
 	protected $path;	//!<DIR where are the images stored.  default company/X/images...
 	protected $mode;
 	protected $outstring;	//!<string to write out by fputs
-	function __construct( $filename = "file.txt" )
+	function __construct( $filename = "file.txt", $path = null )
 	{
 		parent::__construct();
 		$this->filename = $filename;
-		$this->path = company_path() . '/images';
+		if( null !== $path )
+			$this->path = $path;
 		$this->mode = 'r';
 	}
 	function __destruct()
