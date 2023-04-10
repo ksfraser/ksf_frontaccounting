@@ -1,0 +1,19 @@
+{
+  "name": "ksfraser/ksf_common",
+  "description": "A set of classes I reuse in my libraries.",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Kevin Fraser",
+      "email": "kevin@ksfraser.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "ksfraser\\ksf_common\\": "src/"
+    }
+  }
+}
+
