@@ -8,6 +8,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/***
+* To Use:
+*	KSF_Wordpress_Loader::instance();
+*	but use the inheriting class's name
+*/
+
 
 /** From Woo Square
 require_once plugin_dir_path( __FILE__ ) . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
@@ -26,6 +32,9 @@ if ( ! defined( 'WC_SQUARE_PLUGIN_PATH' ) ) {
 **/
 
 
+/**************************
+* CHeck out skyverge/wc-plugin-framework for API, Admin, etc...
+*/
 
 
 /**
@@ -123,6 +132,8 @@ class KSF_Wordpress_Loader {
 	protected function __construct() {
 		$this->inaccessible_arr = array( 'eventloop' );
 
+		register_activation_hook( __FILE__, array( $this, 'activation_check' ) );	//from skyverge wc-plugin-framework
+
 		add_action( 'admin_init', array( $this, 'add_plugin_notices' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ), 15 );
 
@@ -168,7 +179,7 @@ class KSF_Wordpress_Loader {
 			$this->init_hooks();
 			foreach( $this->shortcode_arr as $shortcode => $func )
 			{
-				$this->add_shortcode( $shortcode, $func )
+				$this->add_shortcode( $shortcode, $func );
 			}
 		/** ! These are in the ksf_books constructor ****/
 		}
@@ -200,7 +211,7 @@ class KSF_Wordpress_Loader {
 	 */
 	public function init_plugin() {
 
-		throw new Exception( "This function " . __FUNCTION__ . " must be overwridden!!" );
+		throw new Exception( "This function " . __FUNCTION__ . " must be overwridden!!  See " . get_class( $this ) . " for instructions on HOW" );
 /*
 
 		if ( ! $this->plugins_compatible() ) {
@@ -209,16 +220,29 @@ class KSF_Wordpress_Loader {
 
 		$this->load_framework();
 
+/** If the plugin is structured for PSR-4, do the following:
+
 		// autoload plugin and vendor files
-		$loader = require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+		$loader = require_once( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' );
 
 		// register plugin namespace with autoloader
-		$loader->addPsr4( 'WooCommerce\\Square\\', __DIR__ . '/includes' );
+		$loader->addPsr4( 'SkyVerge\\WooCommerce\\Plugin_Name\\', __DIR__ . '/includes' ); // TODO: plugin namespace here
 
-		require_once plugin_dir_path( __FILE__ ) . 'includes/Functions.php';
+		// depending on how the plugin is structured, you may need to manually load the file that contains the initial plugin function
+		// require_once( plugin_dir_path( __FILE__ ) . 'includes/Functions.php' ); // TODO: maybe load a file to call your initialization function
+
+		/****************** /
+
+		/** Otherwise, for plugins that use the traditional WordPress class-class-name.php structure, simply include the main plugin file:
+
+		// load the main plugin class
+		require_once( plugin_dir_path( __FILE__ ) . 'class-wc-framework-plugin.php' ); // TODO: main plugin class file
+
+		******************* /
 
 		// fire it up!
-		wc_square();
+		wc_framework_plugin(); // TODO: call the main plugin method
+
 */
 	}
 
@@ -230,6 +254,18 @@ class KSF_Wordpress_Loader {
 	protected function load_framework() {
 		throw new Exception( "This function " . __FUNCTION__ . " must be overwridden!!" );
 /*
+
+
+		if ( ! class_exists( '\\SkyVerge\\WooCommerce\\PluginFramework\\' . $this->get_framework_version_namespace() . '\\SV_WC_Plugin' ) ) {
+			require_once( plugin_dir_path( __FILE__ ) . 'lib/skyverge/woocommerce/class-sv-wc-plugin.php' );
+		}
+
+		// TODO: remove this if not a payment gateway
+		if ( ! class_exists( '\\SkyVerge\\WooCommerce\\PluginFramework\\' . $this->get_framework_version_namespace() . '\\SV_WC_Payment_Gateway_Plugin' ) ) {
+			require_once( plugin_dir_path( __FILE__ ) . 'lib/skyverge/woocommerce/payment-gateway/class-sv-wc-payment-gateway-plugin.php' );
+		}
+
+ *** OR ***
 		require_once plugin_dir_path( __FILE__ ) . 'includes/Framework/Plugin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'includes/Framework/PaymentGateway/Payment_Gateway_Plugin.php';
 */
@@ -259,6 +295,78 @@ class KSF_Wordpress_Loader {
 		}
 
 	}
+
+	/**
+	 * Gets the framework version in namespace form.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	protected function get_framework_version_namespace() {
+
+		return 'v' . str_replace( '.', '_', $this->get_framework_version() );
+	}
+
+
+	/**
+	 * Gets the framework version used by this plugin.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	protected function get_framework_version() {
+
+		return self::FRAMEWORK_VERSION;
+	}
+
+	/**
+	 * Checks the server environment and other factors and deactivates plugins as necessary.
+	 *
+	 * Based on http://wptavern.com/how-to-prevent-wordpress-plugins-from-activating-on-sites-with-incompatible-hosting-environments
+	 *
+	 * @since 1.0.0
+	 */
+	public function activation_check() {
+
+		if ( ! $this->is_environment_compatible() ) {
+
+			$this->deactivate_plugin();
+
+			wp_die( self::PLUGIN_NAME . ' could not be activated. ' . $this->get_environment_message() );
+		}
+	}
+
+	/**
+	 * Checks the environment on loading WordPress, just in case the environment changes after activation.
+	 *
+	 * @since 1.0.0
+	 */
+	public function check_environment() {
+
+		if ( ! $this->is_environment_compatible() && is_plugin_active( plugin_basename( __FILE__ ) ) ) {
+
+			$this->deactivate_plugin();
+
+			$this->add_admin_notice( 'bad_environment', 'error', self::PLUGIN_NAME . ' has been deactivated. ' . $this->get_environment_message() );
+		}
+	}
+
+	/**
+	 * Gets the message for display when the environment is incompatible with this plugin.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	protected function get_environment_message() {
+
+		$message = sprintf( 'The minimum PHP version required for this plugin is %1$s. You are running %2$s.', self::MINIMUM_PHP_VERSION, PHP_VERSION );
+
+		return $message;
+	}
+
 
 	/**
 	 * Determines if the required plugins are compatible.
@@ -451,8 +559,7 @@ class KSF_Wordpress_Loader {
 		add_shortcode( $code, $fcn );
 	}
 
-	/
-	 * Wmen WP has loaded all plugins, trigger the `KSF_Books_loaded` hook.
+	/* Wmen WP has loaded all plugins, trigger the `KSF_Books_loaded` hook.
 	 *
 	 * This ensures `KSF_Books_loaded` is called only after all other plugins
 	 * are loaded, to avoid issues caused by plugin directory naming changing
@@ -487,7 +594,7 @@ class KSF_Wordpress_Loader {
 		add_action( 'activated_plugin', array( 'KSF_Books_Admin', 'activated_plugin' ) );
 		add_action( 'deactivated_plugin', array( 'KSF_Books_Admin', 'deactivated_plugin' ) );
 
-		add_action("init", array( $this, array( 'KSF_Books_Post_Series', "custom_post_type" ), 2);
+		add_action("init", array( $this, array( 'KSF_Books_Post_Series', "custom_post_type" ), 2) );
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_init', array($this, 'load_plugin'), 11 );
          	add_action( 'admin_enqueue_scripts', array($this, 'load_admin_script_style'));
