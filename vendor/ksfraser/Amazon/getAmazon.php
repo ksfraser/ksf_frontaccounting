@@ -33,7 +33,7 @@ class Amazon implements HTML_QuickForm2_DataSource
 	var $IdType;
 	var $request;
 	var $response;
-	function __construct ( $barcode, $access_key = "AKIAI3CCGH4ZGZJ4C24Q", $awssecret = "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", $awsassoc = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwD+k0cib5QxYp5NKd4dket9ShDwzJvpcEP0LgfiZIW1zCU82A5r/vuFr1aaPOqQoN/qJEJUZU3eoEtNAm9uZed4+LHyD9BaQjrbX1WFEC/vspUNbUXFO6qkOFUOwbTT9D7yXOpT8sKMGfV4mDkgWH9qEA/aW6klJtq9uhOS6qqwIDAQAB" )
+	function __construct ( $barcode, $access_key, $awssecret, $awsassoc )
 	{
 
 		$api = new AmazonProductAPI();
