@@ -2,7 +2,10 @@
 
 $path_to_root="../..";
 
-require_once( 'class.kfLog.php' );	//Extends origin
+require __DIR__ . '/vendor/autoload.php';
+
+//require_once( 'class.kfLog.php' );	//Extends origin
+use ksfraser\kfLog;
 
 define( 'MINMODPATH', 12 );
 
