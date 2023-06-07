@@ -1,6 +1,6 @@
 {
-  "name": "ksfraser/frontaccounting",
-  "description": "A set of classes for FrontAccounting.",
+  "name": "ksfraser/amazon",
+  "description": "A set of classes for working within Amazon.",
   "type": "library",
   "authors": [
     {
@@ -9,10 +9,12 @@
     }
   ],
   "minimum-stability": "dev",
-  "require": {},
+  "require": {
+      "ksfraser/kfLog": "*"
+  },
   "autoload": {
     "psr-4": {
-      "ksfraser\\FrontAccounting\\": "src/"
+      "ksfraser\\origin\\": "src/"
     }
   },
   "require-dev": {

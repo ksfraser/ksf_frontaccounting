@@ -1,9 +1,9 @@
 <?php
 
-	//https://www.googleapis.com/books/v1/volumes?q=isbn:9780441018697&key=AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI
+	//https://www.googleapis.com/books/v1/volumes?q=isbn:9780441018697&key=AIz aS yC sv Xz4TDq6ShUV_oJ4aOVlJerrvP6lZkI
  //$baseurl = 'https://www.googleapis.com'; 
  //$endpoint = '/books/v1/volumes';
- //$endpoint = '/books/v1/volumes?key=AIzaSyCsvXz4TDq6ShUV_oJ4aOVlJerrvP6lZkI&q=isbn:';
+ //$endpoint = '/books/v1/volumes?key=AIzaSyCsvXz4T Dq 6Sh UV_oJ4aOVlJerrvP6lZkI&q=isbn:';
  //$isbn = '9780441018697';
  //$queryval = $isbn;
 

@@ -1,6 +1,8 @@
 <?php
 
 //20230408 Adding the fputs/fopen/fclose/... into ksf_file
+//20230607 this file should be replaced by COMPOSER files ksf_composer_packages/ksf-file/src/*
+
 
 require_once( 'class.fa_origin.php' );
 
